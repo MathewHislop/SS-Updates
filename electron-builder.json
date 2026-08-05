@@ -1,0 +1,47 @@
+{
+  "appId": "com.simplescheduler.desktop",
+  "productName": "Simple Scheduler",
+  "directories": {
+    "output": "release"
+  },
+  "publish": {
+    "provider": "github",
+    "owner": "MathewHislop",
+    "repo": "Small-Business-Scheduler"
+  },
+  "files": [
+    "electron/**/*",
+    "package.json",
+    "node_modules/**/*"
+  ],
+  "extraResources": [
+    {
+      "from": "server",
+      "to": "server",
+      "filter": ["**/*", "!data/**", "!uploads/**"]
+    },
+    {
+      "from": "client/dist",
+      "to": "client-dist"
+    }
+  ],
+  "win": {
+    "target": [{ "target": "nsis", "arch": ["x64"] }]
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true
+  },
+  "mac": {
+    "target": [{ "target": "dmg", "arch": ["universal"] }],
+    "category": "public.app-category.business",
+    "hardenedRuntime": true,
+    "entitlements": "build/entitlements.mac.plist",
+    "entitlementsInherit": "build/entitlements.mac.plist",
+    "gatekeeperAssess": false
+  },
+  "afterSign": "build/notarize.js"
+}

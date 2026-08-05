@@ -1,0 +1,29 @@
+{
+  "name": "simple-scheduler",
+  "private": true,
+  "version": "1.1.0",
+  "description": "Calendar, CRM, and job history for a trade business.",
+  "author": "Mathew Slop",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,green \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "install:all": "npm install && npm --prefix server install && npm --prefix client install",
+    "build:client": "npm --prefix client run build",
+    "electron:preview": "npm run build:client && electron .",
+    "dist:win": "npm run build:client && electron-builder --win --dir",
+    "dist:win:installer": "npm run build:client && electron-builder --win",
+    "dist:mac": "npm run build:client && electron-builder --mac",
+    "release:win": "npm run build:client && electron-builder --win --publish always"
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.9"
+  },
+  "devDependencies": {
+    "@electron/notarize": "^2.5.0",
+    "concurrently": "^9.1.0",
+    "electron": "^43.3.0",
+    "electron-builder": "^25.1.8"
+  }
+}
