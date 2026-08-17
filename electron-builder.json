@@ -1,6 +1,7 @@
 {
   "appId": "com.simplescheduler.desktop",
-  "productName": "Simple Scheduler",
+  "productName": "Site Sparrow",
+  "icon": "build/icon.png",
   "directories": {
     "output": "release"
   },
@@ -33,7 +34,9 @@
     "perMachine": false,
     "allowToChangeInstallationDirectory": true,
     "createDesktopShortcut": true,
-    "createStartMenuShortcut": true
+    "createStartMenuShortcut": true,
+    "shortcutName": "Site Sparrow",
+    "uninstallDisplayName": "Site Sparrow"
   },
   "mac": {
     "target": [{ "target": "dmg", "arch": ["universal"] }],

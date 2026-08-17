@@ -1,3 +1,57 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+   Site Sparrow brand tokens — SINGLE SOURCE OF TRUTH.
+
+   Values are space-separated RGB channels so Tailwind can apply opacity
+   modifiers (bg-ink-900/30) via rgb(var(--token) / <alpha-value>).
+
+   PROVISIONAL: the three anchor values below came from a description of the
+   logo, not the final artwork. When the real swatches land, edit ONLY the
+   three lines marked [ANCHOR] plus the ramp steps around them — nothing else
+   in the app hardcodes a brand colour.
+
+     [ANCHOR] --sparrow-500  orange   #E8622D
+     [ANCHOR] --ink-900      charcoal #262322
+     [ANCHOR] --sparrow-white         #FFFFFF
+--------------------------------------------------------------------------- */
+:root {
+  /* Brand orange — identity, links, job chips. */
+  --sparrow-50: 253 243 238;
+  --sparrow-100: 251 227 214;
+  --sparrow-200: 247 196 169;
+  --sparrow-300: 242 159 120;
+  --sparrow-400: 237 126 79;
+  --sparrow-500: 232 98 45; /* [ANCHOR] #E8622D */
+  --sparrow-600: 190 78 28;
+  --sparrow-700: 168 67 27;
+  --sparrow-800: 127 49 21;
+  --sparrow-900: 92 36 17;
+  --sparrow-950: 51 18 8;
+
+  /* Warm neutral ramp, hue-matched to the charcoal. Replaces Tailwind slate. */
+  --ink-50: 247 246 245;
+  --ink-100: 239 237 235;
+  --ink-200: 225 222 218;
+  --ink-300: 207 203 198;
+  --ink-400: 168 162 155;
+  --ink-500: 118 112 104;
+  --ink-600: 90 85 78;
+  --ink-700: 69 64 59;
+  --ink-800: 51 48 45;
+  --ink-900: 38 35 34; /* [ANCHOR] #262322 */
+  --ink-950: 23 21 20;
+
+  /* Paper. Kept as a token for documentation; use Tailwind's `white` in markup. */
+  --sparrow-white: 255 255 255; /* [ANCHOR] #FFFFFF */
+}
+
+/* Visible keyboard focus everywhere, in brand orange. Accessibility baseline —
+   do not remove without replacing with something at least as visible. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid rgb(var(--sparrow-500));
+  outline-offset: 2px;
+  border-radius: 3px;
+}

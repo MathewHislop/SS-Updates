@@ -64,7 +64,7 @@ export function startServer({ port } = {}) {
     const server = app
       .listen(port ?? process.env.PORT ?? 4000, () => {
         const actualPort = server.address().port;
-        console.log(`Simple Scheduler API listening on http://localhost:${actualPort}`);
+        console.log(`Site Sparrow API listening on http://localhost:${actualPort}`);
         resolve({ app, server, port: actualPort });
       })
       .on("error", reject);

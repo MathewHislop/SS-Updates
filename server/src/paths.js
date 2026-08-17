@@ -5,7 +5,8 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // SCHEDULER_DATA_DIR is set by the Electron main process to the OS's per-user
-// app-data folder (e.g. %APPDATA%\Simple Scheduler). When unset — the plain
+// app-data folder (e.g. %APPDATA%\simple-scheduler — derived from package.json's
+// "name", unaffected by the Site Sparrow display-name rebrand). When unset — the plain
 // `npm run dev` local-prototype workflow — everything stays exactly where it
 // already was, next to the source, so nothing changes for that flow.
 const root = process.env.SCHEDULER_DATA_DIR

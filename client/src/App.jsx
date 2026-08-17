@@ -2,9 +2,13 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import * as XLSX from "xlsx";
 import { Plus, X, Search, Phone, Mail, Calendar as CalendarIcon, Users, Download, ChevronLeft, ChevronRight, Pencil, Trash2, ArrowRight, Building2, Upload, FileText, ExternalLink, Globe, MapPin, StickyNote, Send, Info, Lock, ShieldCheck, AlertTriangle, Clock, DollarSign } from "lucide-react";
 import { api } from "./api.js";
+import Logo from "./Logo.jsx";
 
 // ---------- constants ----------
 const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+// Storage key deliberately NOT renamed at the Site Sparrow rebrand — it's an
+// internal localStorage key, and changing it would silently reset every
+// existing user's selected business on upgrade.
 const ACTIVE_BIZ_KEY = "simple-scheduler-active-business-id";
 
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
@@ -240,7 +244,7 @@ export default function App() {
 
   if (!licenseChecked || !licenseStatus) {
     return (
-      <div className="w-full h-screen flex items-center justify-center bg-[#F5F6F8] text-slate-500 text-sm">
+      <div className="w-full h-screen flex items-center justify-center bg-ink-50 text-ink-500 text-sm">
         Loading…
       </div>
     );
@@ -272,7 +276,7 @@ export default function App() {
 
   if (!loaded || !activeBusinessId) {
     return (
-      <div className="w-full h-screen flex items-center justify-center bg-[#F5F6F8] text-slate-500 text-sm">
+      <div className="w-full h-screen flex items-center justify-center bg-ink-50 text-ink-500 text-sm">
         Loading your workspace…
       </div>
     );
@@ -534,7 +538,7 @@ export default function App() {
       const logSheet = XLSX.utils.json_to_sheet(logRows.length ? logRows : [{ Date: "", Customer: "", Type: "", Details: "" }]);
       XLSX.utils.book_append_sheet(wb, logSheet, safeSheetName(`${biz.name} Activity Log`));
     });
-    XLSX.writeFile(wb, `scheduler-export-${todayStr()}.xlsx`);
+    XLSX.writeFile(wb, `site-sparrow-export-${todayStr()}.xlsx`);
   };
 
   const exportWeeklySchedule = (anchorDateStr) => {
@@ -601,22 +605,22 @@ export default function App() {
   })();
 
   return (
-    <div className="w-full h-screen flex flex-col bg-[#F5F6F8] text-slate-800 font-sans">
+    <div className="w-full h-screen flex flex-col bg-ink-50 text-ink-800 font-sans">
       {/* Top bar */}
-      <div className="flex items-center justify-between px-5 py-3 bg-white border-b border-slate-200 shrink-0">
+      <div className="flex items-center justify-between px-5 py-3 bg-white border-b border-ink-200 shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: activeBiz.color }} />
-          <h1 className="text-[15px] font-semibold tracking-tight text-slate-900">{activeBiz.name}</h1>
-          <span className="text-xs text-slate-400">
+          <h1 className="text-[15px] font-semibold tracking-tight text-ink-900">{activeBiz.name}</h1>
+          <span className="text-xs text-ink-400">
             {saveStatus === "saving" ? "Saving…" : saveStatus === "saved" ? "Saved" : saveStatus === "error" ? "Couldn't save" : ""}
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex bg-slate-100 rounded-lg p-0.5">
+          <div className="flex bg-ink-100 rounded-lg p-0.5">
             <button
               onClick={() => setView("calendar")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition ${
-                view === "calendar" ? "bg-white shadow-sm text-slate-900" : "text-slate-500 hover:text-slate-700"
+                view === "calendar" ? "bg-white shadow-sm text-ink-900" : "text-ink-500 hover:text-ink-700"
               }`}
             >
               <CalendarIcon size={14} /> Calendar
@@ -624,7 +628,7 @@ export default function App() {
             <button
               onClick={() => setView("crm")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition ${
-                view === "crm" ? "bg-white shadow-sm text-slate-900" : "text-slate-500 hover:text-slate-700"
+                view === "crm" ? "bg-white shadow-sm text-ink-900" : "text-ink-500 hover:text-ink-700"
               }`}
             >
               <Users size={14} /> CRM
@@ -632,7 +636,7 @@ export default function App() {
             <button
               onClick={() => setView("profile")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition ${
-                view === "profile" ? "bg-white shadow-sm text-slate-900" : "text-slate-500 hover:text-slate-700"
+                view === "profile" ? "bg-white shadow-sm text-ink-900" : "text-ink-500 hover:text-ink-700"
               }`}
             >
               <Building2 size={14} /> Business Profile
@@ -640,14 +644,14 @@ export default function App() {
           </div>
           <button
             onClick={exportToExcel}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-ink-600 border border-ink-200 hover:bg-ink-50 transition"
           >
             <Download size={14} /> Export to Excel
           </button>
           {updateStatus?.updateDownloaded && (
             <button
               onClick={installUpdateNow}
-              className="text-xs px-2 py-1 rounded-md border border-teal-300 bg-teal-50 text-teal-800 hover:bg-teal-100"
+              className="text-xs px-2 py-1 rounded-md border border-ink-300 bg-ink-100 text-ink-800 hover:bg-ink-200"
               title={`Version ${updateStatus.version} is downloaded — click to restart and install`}
             >
               Update ready · Restart
@@ -659,7 +663,7 @@ export default function App() {
               className={`text-xs px-2 py-1 rounded-md border ${
                 licenseStatus.trial.daysLeft <= 3
                   ? "border-amber-300 bg-amber-50 text-amber-800"
-                  : "border-slate-200 text-slate-500 hover:bg-slate-50"
+                  : "border-ink-200 text-ink-500 hover:bg-ink-50"
               }`}
             >
               Trial · {licenseStatus.trial.daysLeft}d left
@@ -667,7 +671,7 @@ export default function App() {
           )}
           <button
             onClick={() => setAboutOpen(true)}
-            className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-700 px-1.5"
+            className="flex items-center gap-1 text-xs text-ink-400 hover:text-ink-700 px-1.5"
             title="About / license"
           >
             <Info size={13} /> v{version || "…"}
@@ -678,7 +682,7 @@ export default function App() {
       {/* Main content */}
       <div className="flex-1 overflow-hidden">
         {!bundleLoaded ? (
-          <div className="h-full flex items-center justify-center text-sm text-slate-400">Loading…</div>
+          <div className="h-full flex items-center justify-center text-sm text-ink-400">Loading…</div>
         ) : view === "profile" ? (
           <BusinessProfileView
             key={activeBiz.id}
@@ -732,16 +736,16 @@ export default function App() {
           the full Excel-style tab strip only appears once there's a second business,
           so a new buyer isn't shown a tab-switching concept they don't need on day one. */}
       {businesses.length === 1 ? (
-        <div className="shrink-0 flex items-center bg-[#E7E9ED] border-t border-slate-300 px-3 py-1.5">
+        <div className="shrink-0 flex items-center bg-ink-100 border-t border-ink-300 px-3 py-1.5">
           <button
             onClick={addBusiness}
-            className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-800 transition"
+            className="flex items-center gap-1 text-xs text-ink-500 hover:text-ink-800 transition"
           >
             <Plus size={12} /> Add another business
           </button>
         </div>
       ) : (
-      <div className="shrink-0 flex items-end gap-0.5 bg-[#E7E9ED] border-t border-slate-300 px-2 pt-1.5 overflow-x-auto">
+      <div className="shrink-0 flex items-end gap-0.5 bg-ink-100 border-t border-ink-300 px-2 pt-1.5 overflow-x-auto">
         {businesses.map((biz) => {
           const active = biz.id === activeBusinessId;
           return (
@@ -754,8 +758,8 @@ export default function App() {
               onDoubleClick={() => setRenamingTab(biz.id)}
               className={`group relative flex items-center gap-1.5 px-3.5 py-2 text-sm cursor-pointer select-none rounded-t-md border border-b-0 ${
                 active
-                  ? "bg-white text-slate-900 font-medium border-slate-300"
-                  : "bg-[#DCDFE4] text-slate-500 border-transparent hover:bg-[#EAECEF]"
+                  ? "bg-white text-ink-900 font-medium border-ink-300"
+                  : "bg-ink-200 text-ink-500 border-transparent hover:bg-ink-50"
               }`}
               style={{ minWidth: 90 }}
             >
@@ -773,7 +777,7 @@ export default function App() {
                     if (e.key === "Escape") setRenamingTab(null);
                   }}
                   onClick={(e) => e.stopPropagation()}
-                  className="w-24 bg-transparent border-b border-slate-400 outline-none text-sm"
+                  className="w-24 bg-transparent border-b border-ink-400 outline-none text-sm"
                 />
               ) : (
                 <span className="whitespace-nowrap">{biz.name}</span>
@@ -784,7 +788,7 @@ export default function App() {
                     e.stopPropagation();
                     deleteBusiness(biz.id);
                   }}
-                  className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-600 transition"
+                  className="opacity-0 group-hover:opacity-100 text-ink-400 hover:text-rose-600 transition"
                 >
                   <X size={12} />
                 </button>
@@ -795,7 +799,7 @@ export default function App() {
         <button
           onClick={addBusiness}
           title="Add business"
-          className="flex items-center justify-center w-7 h-7 mb-1 ml-1 rounded-md text-slate-500 hover:bg-white hover:text-slate-800 transition"
+          className="flex items-center justify-center w-7 h-7 mb-1 ml-1 rounded-md text-ink-500 hover:bg-white hover:text-ink-800 transition"
         >
           <Plus size={16} />
         </button>
@@ -871,39 +875,40 @@ function AccessGate({ status, version, onActivated }) {
   };
 
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-[#F5F6F8] p-6">
+    <div className="w-full h-screen flex items-center justify-center bg-ink-50 p-6">
       <div className="max-w-sm w-full bg-white rounded-xl shadow-xl p-6 flex flex-col gap-4">
-        <div className="flex items-center gap-2 text-slate-900">
+        <Logo size={24} className="self-start" />
+        <div className="flex items-center gap-2 text-ink-900">
           <Lock size={18} />
           <h1 className="text-base font-semibold">
             {wasLicensed ? "Your license isn't active" : "Your free trial has ended"}
           </h1>
         </div>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-ink-500">
           {wasLicensed
-            ? `Lemon Squeezy reports this license as "${status.licenseStatus}". Enter a valid license key to keep using Simple Scheduler.`
-            : "Enter the license key from your purchase confirmation email to keep using Simple Scheduler."}
+            ? `Lemon Squeezy reports this license as "${status.licenseStatus}". Enter a valid license key to keep using Site Sparrow.`
+            : "Enter the license key from your purchase confirmation email to keep using Site Sparrow."}
         </p>
         <div>
-          <label className="text-xs font-medium text-slate-500">License key</label>
+          <label className="text-xs font-medium text-ink-500">License key</label>
           <input
             autoFocus
             value={key}
             onChange={(e) => setKey(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleActivate()}
             placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
-            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400"
+            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400"
           />
         </div>
         {error && <div className="text-xs text-rose-600">{error}</div>}
         <button
           onClick={handleActivate}
           disabled={!key.trim() || activating}
-          className="text-sm px-3.5 py-2 rounded-md bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40"
+          className="text-sm px-3.5 py-2 rounded-md bg-ink-900 text-white hover:bg-ink-800 disabled:opacity-40"
         >
           {activating ? "Activating…" : "Activate"}
         </button>
-        <div className="text-xs text-slate-400 text-center">v{version || "…"}</div>
+        <div className="text-xs text-ink-400 text-center">v{version || "…"}</div>
       </div>
     </div>
   );
@@ -912,20 +917,21 @@ function AccessGate({ status, version, onActivated }) {
 // ---------- First-run onboarding ----------
 function Onboarding({ status, onDone }) {
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-[#F5F6F8] p-6">
+    <div className="w-full h-screen flex items-center justify-center bg-ink-50 p-6">
       <div className="max-w-md w-full bg-white rounded-xl shadow-xl p-7 flex flex-col gap-4">
-        <h1 className="text-lg font-semibold text-slate-900">Welcome to Simple Scheduler</h1>
-        <p className="text-sm text-slate-600">
+        <Logo size={32} className="self-start" alt="" />
+        <h1 className="text-lg font-semibold text-ink-900">Welcome to Site Sparrow</h1>
+        <p className="text-sm text-ink-600">
           A calendar, customer records, and job history for your trade business — booking, CRM, and
           business-profile notes, all in one place.
         </p>
         {status.mode === "trial" ? (
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-ink-600">
             Your 14-day free trial starts now — <strong>{status.trial.daysLeft} days left</strong>. Activate a
             license key any time from the small version link in the top bar.
           </p>
         ) : (
-          <p className="text-sm text-slate-600">You're fully licensed — thanks for buying Simple Scheduler.</p>
+          <p className="text-sm text-ink-600">You're fully licensed — thanks for buying Site Sparrow.</p>
         )}
         <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-3">
           <ShieldCheck size={16} className="text-amber-700 mt-0.5 shrink-0" />
@@ -936,7 +942,7 @@ function Onboarding({ status, onDone }) {
         </div>
         <button
           onClick={onDone}
-          className="text-sm px-3.5 py-2 rounded-md bg-slate-900 text-white hover:bg-slate-800 self-start"
+          className="text-sm px-3.5 py-2 rounded-md bg-ink-900 text-white hover:bg-ink-800 self-start"
         >
           Get started
         </button>
@@ -988,29 +994,32 @@ function AboutPanel({ version, status, updateStatus, onInstallUpdate, onClose, o
   };
 
   const statusLine = (() => {
-    if (status.mode === "licensed") return { text: "Licensed", tone: "text-teal-700" };
-    if (status.mode === "trial") return { text: `Free trial — ${status.trial.daysLeft} days left`, tone: "text-slate-700" };
+    if (status.mode === "licensed") return { text: "Licensed", tone: "text-sparrow-700" };
+    if (status.mode === "trial") return { text: `Free trial — ${status.trial.daysLeft} days left`, tone: "text-ink-700" };
     if (status.mode === "license_inactive") return { text: `License ${status.licenseStatus || "inactive"}`, tone: "text-rose-600" };
     return { text: "Trial expired", tone: "text-rose-600" };
   })();
 
   return (
-    <Modal onClose={onClose} title="About Simple Scheduler">
+    <Modal onClose={onClose} title="About Site Sparrow">
       <div className="flex flex-col gap-4">
-        <div className="text-xs text-slate-400">Version v{version || "…"}</div>
+        <div className="flex items-center gap-2.5">
+          <Logo variant="mark" size={20} alt="" />
+          <div className="text-xs text-ink-400">Version v{version || "…"}</div>
+        </div>
 
         {updateStatus?.updateDownloaded ? (
-          <div className="flex items-center justify-between gap-2 bg-teal-50 border border-teal-200 rounded-lg p-2.5">
-            <span className="text-xs text-teal-800">Version {updateStatus.version} is ready to install.</span>
+          <div className="flex items-center justify-between gap-2 bg-ink-100 border border-ink-200 rounded-lg p-2.5">
+            <span className="text-xs text-ink-800">Version {updateStatus.version} is ready to install.</span>
             <button
               onClick={onInstallUpdate}
-              className="text-xs px-2 py-1 rounded-md bg-teal-700 text-white hover:bg-teal-800 shrink-0"
+              className="text-xs px-2 py-1 rounded-md bg-ink-900 text-white hover:bg-ink-800 shrink-0"
             >
               Restart now
             </button>
           </div>
         ) : updateStatus?.updateAvailable ? (
-          <div className="text-xs text-slate-500">Downloading version {updateStatus.version}…</div>
+          <div className="text-xs text-ink-500">Downloading version {updateStatus.version}…</div>
         ) : null}
 
         <div className={`text-sm font-medium ${statusLine.tone}`}>{statusLine.text}</div>
@@ -1021,12 +1030,12 @@ function AboutPanel({ version, status, updateStatus, onInstallUpdate, onClose, o
         )}
 
         <div>
-          <label className="text-xs font-medium text-slate-500">License key</label>
+          <label className="text-xs font-medium text-ink-500">License key</label>
           <input
             value={key}
             onChange={(e) => setKey(e.target.value)}
             placeholder="Enter a license key to activate or switch"
-            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400"
+            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400"
           />
         </div>
         {error && <div className="text-xs text-rose-600">{error}</div>}
@@ -1034,14 +1043,14 @@ function AboutPanel({ version, status, updateStatus, onInstallUpdate, onClose, o
           <button
             onClick={handleActivate}
             disabled={!key.trim() || busy}
-            className="text-xs px-2.5 py-1.5 rounded-md bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40"
+            className="text-xs px-2.5 py-1.5 rounded-md bg-ink-900 text-white hover:bg-ink-800 disabled:opacity-40"
           >
             Activate
           </button>
           <button
             onClick={handleRefresh}
             disabled={refreshing || status.mode === "trial"}
-            className="text-xs px-2.5 py-1.5 rounded-md text-slate-600 border border-slate-200 hover:bg-slate-50 disabled:opacity-40"
+            className="text-xs px-2.5 py-1.5 rounded-md text-ink-600 border border-ink-200 hover:bg-ink-50 disabled:opacity-40"
           >
             {refreshing ? "Checking…" : "Check license now"}
           </button>
@@ -1056,11 +1065,11 @@ function AboutPanel({ version, status, updateStatus, onInstallUpdate, onClose, o
           )}
         </div>
 
-        <div className="border-t border-slate-100 pt-3 flex items-start gap-2">
-          <ShieldCheck size={14} className="text-slate-400 mt-0.5 shrink-0" />
-          <div className="text-xs text-slate-500">
+        <div className="border-t border-ink-100 pt-3 flex items-start gap-2">
+          <ShieldCheck size={14} className="text-ink-400 mt-0.5 shrink-0" />
+          <div className="text-xs text-ink-500">
             Your data lives only on this PC. Back it up regularly.
-            <button onClick={onExport} className="ml-1 text-teal-700 hover:underline font-medium">
+            <button onClick={onExport} className="ml-1 text-sparrow-700 hover:underline font-medium">
               Export to Excel now
             </button>
           </div>
@@ -1111,11 +1120,11 @@ function CalendarView({ jobs, customers, month, year, setMonth, setYear, onOpenJ
     <div className="h-full flex flex-col p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <button onClick={goPrev} className="p-1.5 rounded-md hover:bg-slate-200 transition">
+          <button onClick={goPrev} className="p-1.5 rounded-md hover:bg-ink-200 transition">
             <ChevronLeft size={16} />
           </button>
-          <h2 className="text-sm font-semibold text-slate-800 w-40">{monthLabel}</h2>
-          <button onClick={goNext} className="p-1.5 rounded-md hover:bg-slate-200 transition">
+          <h2 className="text-sm font-semibold text-ink-800 w-40">{monthLabel}</h2>
+          <button onClick={goNext} className="p-1.5 rounded-md hover:bg-ink-200 transition">
             <ChevronRight size={16} />
           </button>
           <button
@@ -1124,13 +1133,13 @@ function CalendarView({ jobs, customers, month, year, setMonth, setYear, onOpenJ
               setMonth(t.getMonth());
               setYear(t.getFullYear());
             }}
-            className="ml-2 text-xs text-slate-500 hover:text-slate-800 border border-slate-200 rounded-md px-2 py-1"
+            className="ml-2 text-xs text-ink-500 hover:text-ink-800 border border-ink-200 rounded-md px-2 py-1"
           >
             Today
           </button>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 border border-slate-200 rounded-md px-2 py-1 bg-white">
+          <div className="flex items-center gap-1.5 border border-ink-200 rounded-md px-2 py-1 bg-white">
             <input
               type="date"
               value={weekExportDate}
@@ -1140,21 +1149,21 @@ function CalendarView({ jobs, customers, month, year, setMonth, setYear, onOpenJ
             <button
               onClick={onExportWeek}
               title="Export the Mon–Sun week containing this date"
-              className="flex items-center gap-1 text-xs font-medium text-slate-600 hover:text-slate-900 pl-1 border-l border-slate-200"
+              className="flex items-center gap-1 text-xs font-medium text-ink-600 hover:text-ink-900 pl-1 border-l border-ink-200"
             >
               <Download size={12} /> Export week
             </button>
           </div>
           <button
             onClick={() => onOpenJob(todayStr(), null)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium bg-slate-900 text-white hover:bg-slate-800 transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium bg-ink-900 text-white hover:bg-ink-800 transition"
           >
             <Plus size={14} /> Add job
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-7 text-xs font-medium text-slate-400 mb-1 px-1">
+      <div className="grid grid-cols-7 text-xs font-medium text-ink-400 mb-1 px-1">
         {DAY_LABELS.map((d) => (
           <div key={d} className="py-1">
             {d}
@@ -1172,14 +1181,14 @@ function CalendarView({ jobs, customers, month, year, setMonth, setYear, onOpenJ
             <div
               key={i}
               className={`rounded-lg border p-1.5 flex flex-col min-h-[92px] bg-white ${
-                isToday ? "border-slate-900" : "border-slate-200"
+                isToday ? "border-ink-900" : "border-ink-200"
               }`}
             >
               <div className="flex items-center justify-between mb-1">
-                <span className={`text-xs ${isToday ? "font-bold text-slate-900" : "text-slate-500"}`}>{d}</span>
+                <span className={`text-xs ${isToday ? "font-bold text-ink-900" : "text-ink-500"}`}>{d}</span>
                 <button
                   onClick={() => onOpenJob(dateStr, null)}
-                  className="opacity-0 hover:opacity-100 focus:opacity-100 text-slate-400 hover:text-slate-800"
+                  className="opacity-0 hover:opacity-100 focus:opacity-100 text-ink-400 hover:text-ink-800"
                 >
                   <Plus size={12} />
                 </button>
@@ -1189,18 +1198,18 @@ function CalendarView({ jobs, customers, month, year, setMonth, setYear, onOpenJ
                   <button
                     key={j.id}
                     onClick={() => onOpenJob(dateStr, j.id)}
-                    className="text-left text-[11px] leading-tight px-1.5 py-1 rounded border-l-2 border-teal-500 bg-teal-50 text-teal-800 hover:bg-teal-100 truncate"
+                    className="text-left text-[11px] leading-tight px-1.5 py-1 rounded border-l-2 border-sparrow-500 bg-sparrow-50 text-sparrow-800 hover:bg-sparrow-100 truncate"
                     title={`${formatTime12h(j.startTime)} — ${custName(j.customerId)} — ${j.service}`}
                   >
                     <div className="flex items-center gap-1 font-medium truncate">
-                      <span className="text-teal-600 shrink-0">{formatTime12h(j.startTime)}</span>
+                      <span className="text-sparrow-600 shrink-0">{formatTime12h(j.startTime)}</span>
                       <span className="truncate">{custName(j.customerId)}</span>
                     </div>
-                    <div className="truncate text-teal-700">{j.service}</div>
+                    <div className="truncate text-sparrow-700">{j.service}</div>
                   </button>
                 ))}
                 {dayJobs.length > 3 && (
-                  <span className="text-[10px] text-slate-400 px-1.5">+{dayJobs.length - 3} more</span>
+                  <span className="text-[10px] text-ink-400 px-1.5">+{dayJobs.length - 3} more</span>
                 )}
               </div>
             </div>
@@ -1250,20 +1259,20 @@ function CRMView({
   return (
     <div className="h-full flex">
       {/* customer list */}
-      <div className="w-[340px] shrink-0 border-r border-slate-200 flex flex-col bg-white">
-        <div className="p-3 border-b border-slate-200 flex items-center gap-2">
+      <div className="w-[340px] shrink-0 border-r border-ink-200 flex flex-col bg-white">
+        <div className="p-3 border-b border-ink-200 flex items-center gap-2">
           <div className="relative flex-1">
-            <Search size={13} className="absolute left-2.5 top-2.5 text-slate-400" />
+            <Search size={13} className="absolute left-2.5 top-2.5 text-ink-400" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search customers…"
-              className="w-full pl-7 pr-2 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400"
+              className="w-full pl-7 pr-2 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400"
             />
           </div>
           <button
             onClick={onAddCustomer}
-            className="flex items-center justify-center w-8 h-8 rounded-md bg-slate-900 text-white hover:bg-slate-800 transition shrink-0"
+            className="flex items-center justify-center w-8 h-8 rounded-md bg-ink-900 text-white hover:bg-ink-800 transition shrink-0"
             title="Add customer"
           >
             <Plus size={15} />
@@ -1271,18 +1280,18 @@ function CRMView({
         </div>
         <div className="flex-1 overflow-y-auto">
           {customers.length === 0 && (
-            <div className="p-4 text-sm text-slate-400">No customers yet. Add your first one.</div>
+            <div className="p-4 text-sm text-ink-400">No customers yet. Add your first one.</div>
           )}
           {customers.map((c) => (
             <button
               key={c.id}
               onClick={() => setSelectedCustomerId(c.id)}
-              className={`w-full text-left px-4 py-3 border-b border-slate-100 hover:bg-slate-50 transition ${
-                selectedCustomerId === c.id ? "bg-teal-50" : ""
+              className={`w-full text-left px-4 py-3 border-b border-ink-100 hover:bg-ink-50 transition ${
+                selectedCustomerId === c.id ? "bg-sparrow-50" : ""
               }`}
             >
-              <div className="text-sm font-medium text-slate-900">{c.name}</div>
-              <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-2">
+              <div className="text-sm font-medium text-ink-900">{c.name}</div>
+              <div className="text-xs text-ink-500 mt-0.5 flex items-center gap-2">
                 {c.phone && (
                   <span className="flex items-center gap-1">
                     <Phone size={10} /> {c.phone}
@@ -1297,15 +1306,15 @@ function CRMView({
       {/* detail panel */}
       <div className="flex-1 overflow-y-auto p-6">
         {!selected ? (
-          <div className="h-full flex items-center justify-center text-sm text-slate-400">
+          <div className="h-full flex items-center justify-center text-sm text-ink-400">
             Select a customer to view their profile and job history.
           </div>
         ) : (
           <div className="max-w-2xl">
             <div className="flex items-start justify-between mb-5">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">{selected.name}</h2>
-                <div className="flex items-center gap-4 mt-1.5 text-sm text-slate-500">
+                <h2 className="text-lg font-semibold text-ink-900">{selected.name}</h2>
+                <div className="flex items-center gap-4 mt-1.5 text-sm text-ink-500">
                   {selected.phone && (
                     <span className="flex items-center gap-1.5">
                       <Phone size={12} /> {selected.phone}
@@ -1321,7 +1330,7 @@ function CRMView({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => onEditCustomer(selected)}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-600 border border-slate-200 hover:bg-slate-50"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-ink-600 border border-ink-200 hover:bg-ink-50"
                 >
                   <Pencil size={12} /> Edit
                 </button>
@@ -1343,11 +1352,11 @@ function CRMView({
             />
 
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-slate-700">Activity log</h3>
+              <h3 className="text-sm font-semibold text-ink-700">Activity log</h3>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setNoteModalOpen(true)}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-600 border border-slate-200 hover:bg-slate-50"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-ink-600 border border-ink-200 hover:bg-ink-50"
                 >
                   <StickyNote size={12} /> Note
                 </button>
@@ -1359,13 +1368,13 @@ function CRMView({
                     }
                     setEmailModalOpen(true);
                   }}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-600 border border-slate-200 hover:bg-slate-50"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-ink-600 border border-ink-200 hover:bg-ink-50"
                 >
                   <Mail size={12} /> Email
                 </button>
                 <button
                   onClick={() => onAddJobForCustomer(selected.id)}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium bg-slate-900 text-white hover:bg-slate-800"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium bg-ink-900 text-white hover:bg-ink-800"
                 >
                   <Plus size={12} /> Add job
                 </button>
@@ -1373,7 +1382,7 @@ function CRMView({
             </div>
 
             {activityLog.length === 0 ? (
-              <div className="text-sm text-slate-400 border border-dashed border-slate-200 rounded-lg p-6 text-center">
+              <div className="text-sm text-ink-400 border border-dashed border-ink-200 rounded-lg p-6 text-center">
                 Nothing logged yet for this customer.
               </div>
             ) : (
@@ -1442,7 +1451,7 @@ function CustomerPricingSection({ customer, onUpdateNote, onSaveOverride, onDele
 
   return (
     <div className="mb-6">
-      <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-1.5">
+      <h3 className="text-sm font-semibold text-ink-700 mb-3 flex items-center gap-1.5">
         <DollarSign size={14} /> Pricing
       </h3>
       <textarea
@@ -1451,19 +1460,19 @@ function CustomerPricingSection({ customer, onUpdateNote, onSaveOverride, onDele
         onBlur={() => onUpdateNote(note)}
         rows={2}
         placeholder="e.g. mate's rates, always negotiates 10% off, standard callout + $20 travel…"
-        className="w-full px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400 resize-none"
+        className="w-full px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400 resize-none"
       />
 
       <div className="mt-3 flex flex-col gap-2">
         {(customer.pricingOverrides || []).length === 0 ? null : (
-          <div className="text-xs font-medium text-slate-500">Per-service overrides</div>
+          <div className="text-xs font-medium text-ink-500">Per-service overrides</div>
         )}
         {(customer.pricingOverrides || []).map((o) => (
-          <div key={o.id} className="flex items-center justify-between border border-slate-200 rounded-lg px-3 py-2">
-            <span className="text-sm text-slate-800">{o.serviceLabel}</span>
+          <div key={o.id} className="flex items-center justify-between border border-ink-200 rounded-lg px-3 py-2">
+            <span className="text-sm text-ink-800">{o.serviceLabel}</span>
             <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-slate-900">${o.price.toFixed(2)}</span>
-              <button onClick={() => onDeleteOverride(o.id)} className="text-slate-400 hover:text-rose-600" title="Remove">
+              <span className="text-sm font-medium text-ink-900">${o.price.toFixed(2)}</span>
+              <button onClick={() => onDeleteOverride(o.id)} className="text-ink-400 hover:text-rose-600" title="Remove">
                 <Trash2 size={13} />
               </button>
             </div>
@@ -1474,7 +1483,7 @@ function CustomerPricingSection({ customer, onUpdateNote, onSaveOverride, onDele
             value={newLabel}
             onChange={(e) => setNewLabel(e.target.value)}
             placeholder="Service (e.g. Gutter clean)"
-            className="flex-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400"
+            className="flex-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400"
           />
           <input
             type="number"
@@ -1483,12 +1492,12 @@ function CustomerPricingSection({ customer, onUpdateNote, onSaveOverride, onDele
             value={newPrice}
             onChange={(e) => setNewPrice(e.target.value)}
             placeholder="Price"
-            className="w-24 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400"
+            className="w-24 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400"
           />
           <button
             onClick={handleAddOverride}
             disabled={!newLabel.trim() || !newPrice}
-            className="flex items-center justify-center w-8 h-8 rounded-md bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40 shrink-0"
+            className="flex items-center justify-center w-8 h-8 rounded-md bg-ink-900 text-white hover:bg-ink-800 disabled:opacity-40 shrink-0"
             title="Add override"
           >
             <Plus size={14} />
@@ -1503,23 +1512,23 @@ function ActivityEntry({ entry, onOpenJob, onJumpToJob, onDeleteLog }) {
   if (entry.kind === "job") {
     const j = entry;
     return (
-      <div className="border border-slate-200 rounded-lg p-3 hover:border-slate-300 transition">
+      <div className="border border-ink-200 rounded-lg p-3 hover:border-ink-300 transition">
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-2">
-            <CalendarIcon size={13} className="text-teal-600 mt-0.5 shrink-0" />
+            <CalendarIcon size={13} className="text-ink-400 mt-0.5 shrink-0" />
             <div>
-              <div className="text-sm font-medium text-slate-900">{j.service || "(no service set)"}</div>
-              <div className="text-xs text-slate-500 mt-0.5">
+              <div className="text-sm font-medium text-ink-900">{j.service || "(no service set)"}</div>
+              <div className="text-xs text-ink-500 mt-0.5">
                 {formatLogDate(j.date)} · {formatTimeRange(j.startTime, j.durationMinutes)}
               </div>
-              {j.notes && <div className="text-xs text-slate-600 mt-1.5 whitespace-pre-wrap">{j.notes}</div>}
+              {j.notes && <div className="text-xs text-ink-600 mt-1.5 whitespace-pre-wrap">{j.notes}</div>}
             </div>
           </div>
           <div className="flex items-center gap-1 shrink-0">
-            <button onClick={() => onOpenJob(j.date, j.id)} className="text-xs text-slate-500 hover:text-slate-900 flex items-center gap-1" title="Edit job">
+            <button onClick={() => onOpenJob(j.date, j.id)} className="text-xs text-ink-500 hover:text-ink-900 flex items-center gap-1" title="Edit job">
               <Pencil size={11} />
             </button>
-            <button onClick={() => onJumpToJob(j.date)} className="text-xs text-teal-700 hover:text-teal-900 flex items-center gap-1" title="View on calendar">
+            <button onClick={() => onJumpToJob(j.date)} className="text-xs text-sparrow-700 hover:text-sparrow-900 flex items-center gap-1" title="View on calendar">
               <CalendarIcon size={11} /> <ArrowRight size={10} />
             </button>
           </div>
@@ -1530,23 +1539,23 @@ function ActivityEntry({ entry, onOpenJob, onJumpToJob, onDeleteLog }) {
 
   const isEmail = entry.kind === "email";
   return (
-    <div className="border border-slate-200 rounded-lg p-3 hover:border-slate-300 transition bg-slate-50/50">
+    <div className="border border-ink-200 rounded-lg p-3 hover:border-ink-300 transition bg-ink-50/50">
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-2">
           {isEmail ? (
-            <Mail size={13} className="text-indigo-600 mt-0.5 shrink-0" />
+            <Mail size={13} className="text-ink-400 mt-0.5 shrink-0" />
           ) : (
-            <StickyNote size={13} className="text-amber-600 mt-0.5 shrink-0" />
+            <StickyNote size={13} className="text-ink-400 mt-0.5 shrink-0" />
           )}
           <div>
-            <div className="text-sm font-medium text-slate-900">
+            <div className="text-sm font-medium text-ink-900">
               {isEmail ? entry.subject || "(no subject)" : "Note"}
             </div>
-            <div className="text-xs text-slate-500 mt-0.5">{formatLogDate(entry.date)}</div>
-            {entry.text && <div className="text-xs text-slate-600 mt-1.5 whitespace-pre-wrap">{entry.text}</div>}
+            <div className="text-xs text-ink-500 mt-0.5">{formatLogDate(entry.date)}</div>
+            {entry.text && <div className="text-xs text-ink-600 mt-1.5 whitespace-pre-wrap">{entry.text}</div>}
           </div>
         </div>
-        <button onClick={() => onDeleteLog(entry.id)} className="text-xs text-slate-400 hover:text-rose-600 shrink-0" title="Remove">
+        <button onClick={() => onDeleteLog(entry.id)} className="text-xs text-ink-400 hover:text-rose-600 shrink-0" title="Remove">
           <Trash2 size={11} />
         </button>
       </div>
@@ -1628,56 +1637,56 @@ function BusinessProfileView({ profile, businessId, onUpdate, onFilesChanged, on
       <div className="max-w-2xl flex flex-col gap-6">
         {/* Details */}
         <div>
-          <h3 className="text-sm font-semibold text-slate-700 mb-3">Business details</h3>
+          <h3 className="text-sm font-semibold text-ink-700 mb-3">Business details</h3>
           <div className="grid grid-cols-2 gap-3">
             <div className="col-span-2">
-              <label className="text-xs font-medium text-slate-500">Address</label>
-              <input {...field("address")} placeholder="Street, suburb" className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400" />
+              <label className="text-xs font-medium text-ink-500">Address</label>
+              <input {...field("address")} placeholder="Street, suburb" className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400" />
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-500">Industry / trade</label>
-              <input {...field("industry")} placeholder="e.g. Gutters, Solar, Landscaping" className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400" />
+              <label className="text-xs font-medium text-ink-500">Industry / trade</label>
+              <input {...field("industry")} placeholder="e.g. Gutters, Solar, Landscaping" className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400" />
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-500">Primary contact</label>
-              <input {...field("contactName")} placeholder="Who you deal with" className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400" />
+              <label className="text-xs font-medium text-ink-500">Primary contact</label>
+              <input {...field("contactName")} placeholder="Who you deal with" className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400" />
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-500">Contact phone</label>
-              <input {...field("contactPhone")} className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400" />
+              <label className="text-xs font-medium text-ink-500">Contact phone</label>
+              <input {...field("contactPhone")} className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400" />
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-500">Contact email</label>
-              <input {...field("contactEmail")} className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400" />
+              <label className="text-xs font-medium text-ink-500">Contact email</label>
+              <input {...field("contactEmail")} className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400" />
             </div>
           </div>
         </div>
 
         {/* Links */}
         <div>
-          <h3 className="text-sm font-semibold text-slate-700 mb-3">Links</h3>
+          <h3 className="text-sm font-semibold text-ink-700 mb-3">Links</h3>
           <div className="flex flex-col gap-3">
             <div>
-              <label className="text-xs font-medium text-slate-500 flex items-center gap-1.5">
+              <label className="text-xs font-medium text-ink-500 flex items-center gap-1.5">
                 <MapPin size={11} /> Google Business Profile
               </label>
               <div className="flex items-center gap-2 mt-1">
-                <input {...field("googleProfileUrl")} placeholder="https://g.page/…" className="flex-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400" />
+                <input {...field("googleProfileUrl")} placeholder="https://g.page/…" className="flex-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400" />
                 {local.googleProfileUrl && (
-                  <a href={local.googleProfileUrl} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-teal-700">
+                  <a href={local.googleProfileUrl} target="_blank" rel="noreferrer" className="text-ink-400 hover:text-sparrow-700">
                     <ExternalLink size={14} />
                   </a>
                 )}
               </div>
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-500 flex items-center gap-1.5">
+              <label className="text-xs font-medium text-ink-500 flex items-center gap-1.5">
                 <Globe size={11} /> Website
               </label>
               <div className="flex items-center gap-2 mt-1">
-                <input {...field("websiteUrl")} placeholder="https://…" className="flex-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400" />
+                <input {...field("websiteUrl")} placeholder="https://…" className="flex-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400" />
                 {local.websiteUrl && (
-                  <a href={local.websiteUrl} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-teal-700">
+                  <a href={local.websiteUrl} target="_blank" rel="noreferrer" className="text-ink-400 hover:text-sparrow-700">
                     <ExternalLink size={14} />
                   </a>
                 )}
@@ -1688,23 +1697,23 @@ function BusinessProfileView({ profile, businessId, onUpdate, onFilesChanged, on
 
         {/* Notes */}
         <div>
-          <h3 className="text-sm font-semibold text-slate-700 mb-3">Notes for when you're talking to them</h3>
+          <h3 className="text-sm font-semibold text-ink-700 mb-3">Notes for when you're talking to them</h3>
           <textarea
             {...field("notes")}
             rows={5}
             placeholder="Context, preferences, what's been discussed, what they care about…"
-            className="w-full px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400 resize-none"
+            className="w-full px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400 resize-none"
           />
         </div>
 
         {/* Activity */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-slate-700">Activity</h3>
+            <h3 className="text-sm font-semibold text-ink-700">Activity</h3>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setNoteModalOpen(true)}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-600 border border-slate-200 hover:bg-slate-50"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-ink-600 border border-ink-200 hover:bg-ink-50"
               >
                 <StickyNote size={12} /> Note
               </button>
@@ -1716,7 +1725,7 @@ function BusinessProfileView({ profile, businessId, onUpdate, onFilesChanged, on
                   }
                   setEmailModalOpen(true);
                 }}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-600 border border-slate-200 hover:bg-slate-50"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-ink-600 border border-ink-200 hover:bg-ink-50"
               >
                 <Mail size={12} /> Email
               </button>
@@ -1724,7 +1733,7 @@ function BusinessProfileView({ profile, businessId, onUpdate, onFilesChanged, on
           </div>
 
           {(!local.activityLog || local.activityLog.length === 0) ? (
-            <div className="text-sm text-slate-400 border border-dashed border-slate-200 rounded-lg p-6 text-center">
+            <div className="text-sm text-ink-400 border border-dashed border-ink-200 rounded-lg p-6 text-center">
               No activity logged yet — notes and emails you send from here will show up as a timeline.
             </div>
           ) : (
@@ -1733,20 +1742,20 @@ function BusinessProfileView({ profile, businessId, onUpdate, onFilesChanged, on
                 .slice()
                 .sort((a, b) => (a.date < b.date ? 1 : -1))
                 .map((entry) => (
-                  <div key={entry.id} className="border border-slate-200 rounded-lg p-3 hover:border-slate-300 transition bg-slate-50/50">
+                  <div key={entry.id} className="border border-ink-200 rounded-lg p-3 hover:border-ink-300 transition bg-ink-50/50">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-2">
                         {entry.type === "email" ? (
-                          <Mail size={13} className="text-indigo-600 mt-0.5 shrink-0" />
+                          <Mail size={13} className="text-ink-400 mt-0.5 shrink-0" />
                         ) : (
-                          <StickyNote size={13} className="text-amber-600 mt-0.5 shrink-0" />
+                          <StickyNote size={13} className="text-ink-400 mt-0.5 shrink-0" />
                         )}
                         <div>
-                          <div className="text-sm font-medium text-slate-900">
+                          <div className="text-sm font-medium text-ink-900">
                             {entry.type === "email" ? entry.subject || "(no subject)" : "Note"}
                           </div>
-                          <div className="text-xs text-slate-500 mt-0.5">{formatLogDate(entry.date)}</div>
-                          {entry.text && <div className="text-xs text-slate-600 mt-1.5 whitespace-pre-wrap">{entry.text}</div>}
+                          <div className="text-xs text-ink-500 mt-0.5">{formatLogDate(entry.date)}</div>
+                          {entry.text && <div className="text-xs text-ink-600 mt-1.5 whitespace-pre-wrap">{entry.text}</div>}
                         </div>
                       </div>
                       <button
@@ -1754,7 +1763,7 @@ function BusinessProfileView({ profile, businessId, onUpdate, onFilesChanged, on
                           onDeleteActivity(entry.id);
                           setLocal((l) => ({ ...l, activityLog: (l.activityLog || []).filter((e) => e.id !== entry.id) }));
                         }}
-                        className="text-xs text-slate-400 hover:text-rose-600 shrink-0"
+                        className="text-xs text-ink-400 hover:text-rose-600 shrink-0"
                         title="Remove"
                       >
                         <Trash2 size={11} />
@@ -1769,11 +1778,11 @@ function BusinessProfileView({ profile, businessId, onUpdate, onFilesChanged, on
         {/* Files */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-slate-700">Files</h3>
+            <h3 className="text-sm font-semibold text-ink-700">Files</h3>
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium bg-ink-900 text-white hover:bg-ink-800 disabled:opacity-50"
             >
               <Upload size={12} /> {uploading ? "Uploading…" : "Upload file"}
             </button>
@@ -1796,7 +1805,7 @@ function BusinessProfileView({ profile, businessId, onUpdate, onFilesChanged, on
                 e.preventDefault();
                 handleFiles(e.dataTransfer.files);
               }}
-              className="text-sm text-slate-400 border border-dashed border-slate-200 rounded-lg p-6 text-center"
+              className="text-sm text-ink-400 border border-dashed border-ink-200 rounded-lg p-6 text-center"
             >
               Drop files here or click "Upload file" — contracts, photos, agreements, anything useful to have on hand.
             </div>
@@ -1810,21 +1819,21 @@ function BusinessProfileView({ profile, businessId, onUpdate, onFilesChanged, on
               className="flex flex-col gap-2"
             >
               {local.fileRefs.map((f) => (
-                <div key={f.id} className="flex items-center justify-between border border-slate-200 rounded-lg px-3 py-2">
+                <div key={f.id} className="flex items-center justify-between border border-ink-200 rounded-lg px-3 py-2">
                   <div className="flex items-center gap-2 min-w-0">
-                    <FileText size={14} className="text-slate-400 shrink-0" />
+                    <FileText size={14} className="text-ink-400 shrink-0" />
                     <div className="min-w-0">
-                      <div className="text-sm text-slate-800 truncate">{f.name}</div>
-                      <div className="text-xs text-slate-400">
+                      <div className="text-sm text-ink-800 truncate">{f.name}</div>
+                      <div className="text-xs text-ink-400">
                         {humanFileSize(f.size)} · {new Date(f.uploadedAt).toLocaleDateString()}
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
-                    <button onClick={() => downloadFile(f)} className="p-1.5 text-slate-400 hover:text-slate-800" title="Download">
+                    <button onClick={() => downloadFile(f)} className="p-1.5 text-ink-400 hover:text-ink-800" title="Download">
                       <Download size={13} />
                     </button>
-                    <button onClick={() => deleteFile(f)} className="p-1.5 text-slate-400 hover:text-rose-600" title="Remove">
+                    <button onClick={() => deleteFile(f)} className="p-1.5 text-ink-400 hover:text-rose-600" title="Remove">
                       <Trash2 size={13} />
                     </button>
                   </div>
@@ -1958,29 +1967,29 @@ function JobModal({ initial, customers, jobs, onClose, onSave, onDelete, onCreat
       <div className="flex flex-col gap-4">
         <div className="grid grid-cols-3 gap-3">
           <div>
-            <label className="text-xs font-medium text-slate-500">Date</label>
+            <label className="text-xs font-medium text-ink-500">Date</label>
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400"
+              className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400"
             />
           </div>
           <div>
-            <label className="text-xs font-medium text-slate-500">Start time</label>
+            <label className="text-xs font-medium text-ink-500">Start time</label>
             <input
               type="time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
-              className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400"
+              className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400"
             />
           </div>
           <div>
-            <label className="text-xs font-medium text-slate-500">Duration</label>
+            <label className="text-xs font-medium text-ink-500">Duration</label>
             <select
               value={durationKey}
               onChange={(e) => setDurationKey(e.target.value)}
-              className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400 bg-white"
+              className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400 bg-white"
             >
               {durationChoices.map((o) => (
                 <option key={o.key} value={o.key}>
@@ -1992,7 +2001,7 @@ function JobModal({ initial, customers, jobs, onClose, onSave, onDelete, onCreat
         </div>
 
         {!selectedDuration.days && (
-          <div className="text-xs text-slate-400 -mt-2 flex items-center gap-1">
+          <div className="text-xs text-ink-400 -mt-2 flex items-center gap-1">
             <Clock size={11} /> Ends {formatTime12h(minutesToTime(timeToMinutes(time) + effectiveMinutes))}
           </div>
         )}
@@ -2007,48 +2016,48 @@ function JobModal({ initial, customers, jobs, onClose, onSave, onDelete, onCreat
         )}
 
         <div>
-          <label className="text-xs font-medium text-slate-500">Customer</label>
+          <label className="text-xs font-medium text-ink-500">Customer</label>
           {selectedCustomer && !showNewCustomer ? (
-            <div className="mt-1 flex items-center justify-between px-2.5 py-1.5 rounded-md border border-slate-200 bg-slate-50">
+            <div className="mt-1 flex items-center justify-between px-2.5 py-1.5 rounded-md border border-ink-200 bg-ink-50">
               <span className="text-sm">{selectedCustomer.name}</span>
               <div className="flex items-center gap-2">
-                <button onClick={() => onJumpToCustomer(selectedCustomer.id)} className="text-xs text-teal-700 hover:underline">
+                <button onClick={() => onJumpToCustomer(selectedCustomer.id)} className="text-xs text-sparrow-700 hover:underline">
                   View profile
                 </button>
-                <button onClick={() => setCustomerId("")} className="text-xs text-slate-400 hover:text-slate-700">
+                <button onClick={() => setCustomerId("")} className="text-xs text-ink-400 hover:text-ink-700">
                   Change
                 </button>
               </div>
             </div>
           ) : showNewCustomer ? (
-            <div className="mt-1 flex flex-col gap-2 p-2.5 rounded-md border border-slate-200 bg-slate-50">
+            <div className="mt-1 flex flex-col gap-2 p-2.5 rounded-md border border-ink-200 bg-ink-50">
               <input
                 autoFocus
                 placeholder="Name"
                 value={ncName}
                 onChange={(e) => setNcName(e.target.value)}
-                className="px-2 py-1.5 text-sm rounded-md border border-slate-200 outline-none"
+                className="px-2 py-1.5 text-sm rounded-md border border-ink-200 outline-none"
               />
               <input
                 placeholder="Phone"
                 value={ncPhone}
                 onChange={(e) => setNcPhone(e.target.value)}
-                className="px-2 py-1.5 text-sm rounded-md border border-slate-200 outline-none"
+                className="px-2 py-1.5 text-sm rounded-md border border-ink-200 outline-none"
               />
               <input
                 placeholder="Email"
                 value={ncEmail}
                 onChange={(e) => setNcEmail(e.target.value)}
-                className="px-2 py-1.5 text-sm rounded-md border border-slate-200 outline-none"
+                className="px-2 py-1.5 text-sm rounded-md border border-ink-200 outline-none"
               />
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleCreateCustomer}
-                  className="text-xs px-2.5 py-1.5 rounded-md bg-slate-900 text-white hover:bg-slate-800"
+                  className="text-xs px-2.5 py-1.5 rounded-md bg-ink-900 text-white hover:bg-ink-800"
                 >
                   Create & select
                 </button>
-                <button onClick={() => setShowNewCustomer(false)} className="text-xs text-slate-500 hover:text-slate-800">
+                <button onClick={() => setShowNewCustomer(false)} className="text-xs text-ink-500 hover:text-ink-800">
                   Cancel
                 </button>
               </div>
@@ -2059,25 +2068,25 @@ function JobModal({ initial, customers, jobs, onClose, onSave, onDelete, onCreat
                 placeholder="Search existing customers…"
                 value={custSearch}
                 onChange={(e) => setCustSearch(e.target.value)}
-                className="w-full px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400"
+                className="w-full px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400"
               />
-              <div className="max-h-32 overflow-y-auto mt-1 border border-slate-100 rounded-md">
+              <div className="max-h-32 overflow-y-auto mt-1 border border-ink-100 rounded-md">
                 {filteredCustomers.map((c) => (
                   <button
                     key={c.id}
                     onClick={() => setCustomerId(c.id)}
-                    className="w-full text-left px-2.5 py-1.5 text-sm hover:bg-slate-50 border-b border-slate-50 last:border-0"
+                    className="w-full text-left px-2.5 py-1.5 text-sm hover:bg-ink-50 border-b border-ink-50 last:border-0"
                   >
                     {c.name}
                   </button>
                 ))}
                 {filteredCustomers.length === 0 && (
-                  <div className="px-2.5 py-2 text-xs text-slate-400">No matches.</div>
+                  <div className="px-2.5 py-2 text-xs text-ink-400">No matches.</div>
                 )}
               </div>
               <button
                 onClick={() => setShowNewCustomer(true)}
-                className="mt-1.5 text-xs text-teal-700 hover:underline flex items-center gap-1"
+                className="mt-1.5 text-xs text-sparrow-700 hover:underline flex items-center gap-1"
               >
                 <Plus size={11} /> New customer
               </button>
@@ -2086,17 +2095,17 @@ function JobModal({ initial, customers, jobs, onClose, onSave, onDelete, onCreat
         </div>
 
         <div className="relative">
-          <label className="text-xs font-medium text-slate-500">Job / service</label>
+          <label className="text-xs font-medium text-ink-500">Job / service</label>
           <input
             value={service}
             onChange={(e) => setService(e.target.value)}
             onFocus={() => setServiceListOpen(true)}
             onBlur={() => setTimeout(() => setServiceListOpen(false), 150)}
             placeholder="e.g. Roof inspection, Gutter clean"
-            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400"
+            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400"
           />
           {serviceListOpen && filteredServices.length > 0 && (
-            <div className="absolute z-10 left-0 right-0 mt-1 max-h-36 overflow-y-auto border border-slate-200 rounded-md bg-white shadow-md">
+            <div className="absolute z-10 left-0 right-0 mt-1 max-h-36 overflow-y-auto border border-ink-200 rounded-md bg-white shadow-md">
               {filteredServices.map((s) => (
                 <button
                   key={s}
@@ -2105,7 +2114,7 @@ function JobModal({ initial, customers, jobs, onClose, onSave, onDelete, onCreat
                     setService(s);
                     setServiceListOpen(false);
                   }}
-                  className="w-full text-left px-2.5 py-1.5 text-sm hover:bg-slate-50 border-b border-slate-50 last:border-0"
+                  className="w-full text-left px-2.5 py-1.5 text-sm hover:bg-ink-50 border-b border-ink-50 last:border-0"
                 >
                   {s}
                 </button>
@@ -2115,12 +2124,12 @@ function JobModal({ initial, customers, jobs, onClose, onSave, onDelete, onCreat
         </div>
 
         <div>
-          <label className="text-xs font-medium text-slate-500">Notes</label>
+          <label className="text-xs font-medium text-ink-500">Notes</label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
-            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400 resize-none"
+            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400 resize-none"
           />
         </div>
 
@@ -2136,13 +2145,13 @@ function JobModal({ initial, customers, jobs, onClose, onSave, onDelete, onCreat
             <span />
           )}
           <div className="flex items-center gap-2">
-            <button onClick={onClose} className="text-sm px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-100">
+            <button onClick={onClose} className="text-sm px-3 py-1.5 rounded-md text-ink-600 hover:bg-ink-100">
               Cancel
             </button>
             <button
               onClick={handleSave}
               disabled={!customerId}
-              className="text-sm px-3.5 py-1.5 rounded-md bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40"
+              className="text-sm px-3.5 py-1.5 rounded-md bg-ink-900 text-white hover:bg-ink-800 disabled:opacity-40"
             >
               Save
             </button>
@@ -2175,38 +2184,38 @@ function CustomerModal({ initial, onClose, onSave }) {
     <Modal onClose={onClose} title={initial ? "Edit customer" : "Add customer"}>
       <div className="flex flex-col gap-4">
         <div>
-          <label className="text-xs font-medium text-slate-500">Name</label>
+          <label className="text-xs font-medium text-ink-500">Name</label>
           <input
             autoFocus
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400"
+            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400"
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-slate-500">Phone</label>
+          <label className="text-xs font-medium text-ink-500">Phone</label>
           <input
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400"
+            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400"
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-slate-500">Email</label>
+          <label className="text-xs font-medium text-ink-500">Email</label>
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400"
+            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400"
           />
         </div>
         <div className="flex items-center justify-end gap-2 pt-2">
-          <button onClick={onClose} className="text-sm px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-100">
+          <button onClick={onClose} className="text-sm px-3 py-1.5 rounded-md text-ink-600 hover:bg-ink-100">
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={!name.trim()}
-            className="text-sm px-3.5 py-1.5 rounded-md bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40"
+            className="text-sm px-3.5 py-1.5 rounded-md bg-ink-900 text-white hover:bg-ink-800 disabled:opacity-40"
           >
             Save
           </button>
@@ -2228,16 +2237,16 @@ function NoteModal({ title = "Add note", onClose, onSave }) {
           onChange={(e) => setText(e.target.value)}
           rows={5}
           placeholder="What do you need to remember?"
-          className="w-full px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400 resize-none"
+          className="w-full px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400 resize-none"
         />
         <div className="flex items-center justify-end gap-2">
-          <button onClick={onClose} className="text-sm px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-100">
+          <button onClick={onClose} className="text-sm px-3 py-1.5 rounded-md text-ink-600 hover:bg-ink-100">
             Cancel
           </button>
           <button
             onClick={() => text.trim() && onSave(text.trim())}
             disabled={!text.trim()}
-            className="text-sm px-3.5 py-1.5 rounded-md bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40"
+            className="text-sm px-3.5 py-1.5 rounded-md bg-ink-900 text-white hover:bg-ink-800 disabled:opacity-40"
           >
             Save note
           </button>
@@ -2262,35 +2271,35 @@ function EmailModal({ recipientEmail, recipientName, onClose, onSend }) {
   return (
     <Modal onClose={onClose} title={`Email — ${recipientName || recipientEmail}`}>
       <div className="flex flex-col gap-4">
-        <div className="text-xs text-slate-500">
+        <div className="text-xs text-ink-500">
           Opens your default email app addressed to <span className="font-medium">{recipientEmail}</span>, and logs it here once sent.
         </div>
         <div>
-          <label className="text-xs font-medium text-slate-500">Subject</label>
+          <label className="text-xs font-medium text-ink-500">Subject</label>
           <input
             autoFocus
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
-            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400"
+            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400"
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-slate-500">Message</label>
+          <label className="text-xs font-medium text-ink-500">Message</label>
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
             rows={5}
-            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-slate-200 outline-none focus:border-slate-400 resize-none"
+            className="w-full mt-1 px-2.5 py-1.5 text-sm rounded-md border border-ink-200 outline-none focus:border-ink-400 resize-none"
           />
         </div>
         <div className="flex items-center justify-end gap-2">
-          <button onClick={onClose} className="text-sm px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-100">
+          <button onClick={onClose} className="text-sm px-3 py-1.5 rounded-md text-ink-600 hover:bg-ink-100">
             Cancel
           </button>
           <button
             onClick={handleSend}
             disabled={!subject.trim() && !body.trim()}
-            className="flex items-center gap-1.5 text-sm px-3.5 py-1.5 rounded-md bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40"
+            className="flex items-center gap-1.5 text-sm px-3.5 py-1.5 rounded-md bg-ink-900 text-white hover:bg-ink-800 disabled:opacity-40"
           >
             <Send size={12} /> Open & log
           </button>
@@ -2303,14 +2312,14 @@ function EmailModal({ recipientEmail, recipientName, onClose, onSend }) {
 // ---------- generic modal shell ----------
 function Modal({ title, onClose, children }) {
   return (
-    <div className="fixed inset-0 bg-slate-900/30 flex items-center justify-center z-50 p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-ink-900/30 flex items-center justify-center z-50 p-4" onClick={onClose}>
       <div
         className="bg-white rounded-xl shadow-xl w-full max-w-sm p-5 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-700">
+          <h3 className="text-sm font-semibold text-ink-900">{title}</h3>
+          <button onClick={onClose} className="text-ink-400 hover:text-ink-700">
             <X size={16} />
           </button>
         </div>

@@ -17,7 +17,7 @@ const schema = fs.readFileSync(path.join(__dirname, "schema.sql"), "utf8");
 db.exec(schema);
 runMigrations(db);
 
-const TAB_COLORS = ["#0F766E", "#B45309", "#6D28D9", "#BE123C", "#1D4ED8", "#166534"];
+const TAB_COLORS = ["#E8622D", "#B45309", "#6D28D9", "#BE123C", "#1D4ED8", "#166534"];
 
 // Seed a first business on a brand-new database, matching the prototype's defaultState().
 const businessCount = db.prepare("SELECT COUNT(*) AS n FROM businesses").get().n;

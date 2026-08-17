@@ -11,6 +11,7 @@
     "dev:client": "npm --prefix client run dev",
     "install:all": "npm install && npm --prefix server install && npm --prefix client install",
     "build:client": "npm --prefix client run build",
+    "icons": "node build/generate-icons.js",
     "electron:preview": "npm run build:client && electron .",
     "dist:win": "npm run build:client && electron-builder --win --dir",
     "dist:win:installer": "npm run build:client && electron-builder --win",
