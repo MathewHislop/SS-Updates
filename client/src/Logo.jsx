@@ -5,8 +5,12 @@ import { useState } from "react";
 // The artwork is NOT inlined here — it's loaded from client/public/brand/ so the
 // designer can drop in the final files without anyone editing React:
 //
-//   /brand/site-sparrow-logo.svg  full lockup (bird + wordmark)  — variant="lockup"
-//   /brand/site-sparrow-mark.svg  bird only, square              — variant="mark"
+//   /brand/site-sparrow-logo.png  full lockup (bird + wordmark)  — variant="lockup"
+//   /brand/site-sparrow-mark.png  bird only, square              — variant="mark"
+//
+// PNG rather than SVG: the delivered artwork is a raster export (AI-generated,
+// background-removed), no vector source exists. If a true SVG ever replaces it,
+// just swap these two paths — nothing else here depends on the format.
 //
 // Until those files land, this renders a quiet neutral placeholder rather than a
 // stand-in drawing. A wrong bird is worse than no bird.
@@ -20,8 +24,8 @@ import { useState } from "react";
 //             a visible "Site Sparrow" text label, to avoid double-announcing.
 
 const SOURCES = {
-  lockup: "/brand/site-sparrow-logo.svg",
-  mark: "/brand/site-sparrow-mark.svg",
+  lockup: "/brand/site-sparrow-logo.png",
+  mark: "/brand/site-sparrow-mark.png",
 };
 
 export default function Logo({

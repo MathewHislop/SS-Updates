@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.1.0",
   "description": "Calendar, CRM, and job history for a trade business.",
-  "author": "Mathew Slop",
+  "author": "Site Sparrow Development",
   "main": "electron/main.js",
   "scripts": {
     "dev": "concurrently -n server,client -c blue,green \"npm:dev:server\" \"npm:dev:client\"",
